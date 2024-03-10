@@ -1,0 +1,176 @@
+task:
+  task_name: "open_safe"
+  action_type: "pull"
+
+model:
+  pc_input_feat: 3
+  pc_feat_dim: 128
+  state_feat_dim: 64
+  action_feat_dim: 64
+  action_dim: 9
+  state_dim: 18
+  handle_state_dim: 18
+  fixed_state_dim: 14
+  # actor_model_path: '../robot_arm_models/exp-model_actor-lever_pull_multistep/ckpts/420-network.pth'
+  actor_model_path: '../robot_arm_models/exp-model_actor-universal_two_all_3000/ckpts/495-network.pth'
+
+  critic_model_path: '../robot_arm_models/exp-model_critic-lever_pull_critic_multistep/ckpts/298-network.pth'
+  handle_actor_model_path: '../robot_arm_models/exp-model_actor-universal_one_all/ckpts/495-network.pth'
+  fixed_actor_model_path: '../robot_arm_models/exp-model_actor-universal_fixed_two_3000/ckpts/495-network.pth'
+  without_pro_actor_model_path: '../robot_arm_models/exp-model_actor-universal_two_without_pro/ckpts/595-network.pth'
+  without_pro_handle_actor_model_path: '../robot_arm_models/exp-model_actor_universal_one_without_pro/ckpts/595-network.pth'
+  without_int_handle_actor_model_path: '../robot_arm_models/exp-model_actor-universal_one_without_int_1500/ckpts/595-network.pth'
+  # ump
+  ump_model_path: '../robot_arm_models/exp-model_actor-universal_ump/ckpts/595-network.pth'
+  mobile: True
+
+env:
+  env_name: "franka open safe"
+  numTrain: 1
+  numVal: 0
+  numObservations: 26
+  numActions: 9
+  envSpacing: 2.0
+  maxEpisodeLength: 110
+  actionSpeedScale: 20
+  enableDebugVis: False
+
+  enableCameraSensors: True
+  enableForceSensors: True
+  enableNetContact: False
+
+  model_test: True  # 在收集数据时要关闭/ 测试模型打开
+  gapartnet_baseline: False
+  figure: True
+  collectData: False
+  collect_all: True
+  start_index: 80
+  collectDataPath: "universal-safe-fixed-two/3" # ../logs/_seed{}/***
+  collectPC: True
+  collectForce: False
+  visualizePointcloud: False
+  PointDownSampleNum: 4096
+
+  reset:
+    door:
+      resetPositionNoise: 0.0
+      resetRotationNoise: 0.0
+      resetDofPosRandomInterval: 0.0
+      resetDofVelRandomInterval: 0.0
+    franka:
+      resetPositionNoise: 0.0
+      resetRotationNoise: 0.0
+      resetDofPosRandomInterval: 0.0
+      resetDofVelRandomInterval: 0.0
+
+  driveMode: "osc"
+  clipObservations: 5.0
+  clipActions: 1.0
+
+  asset:
+    assetRoot: "../Datasets"
+    datasetPath: "Safe"
+    # datasetPath: "safe_datasets/train_safe"
+    DoorAssetNumTrain: 1
+    DoorAssetNumVal: 0
+    randomAsset: False
+    load_block: "open-source-data"
+    trainAssets:
+      open-source-data:
+      #train
+        # '0':
+        #   bounding_box: 99611129961204/bounding_box.json
+        #   handle_bounding: 99611129961204/handle_bounding.json
+        #   name: '99611129961204'
+        #   path: 99611129961204/mobility.urdf
+        '1':
+          bounding_box: 99611519961206/bounding_box.json
+          handle_bounding: 99611519961206/handle_bounding.json
+          name: '99611519961206'
+          path: 99611519961206/mobility.urdf
+        # '2':
+        #   bounding_box: 99611539961209/bounding_box.json
+        #   handle_bounding: 99611539961209/handle_bounding.json
+        #   name: '99611539961209'
+        #   path: 99611539961209/mobility.urdf
+        # '3':
+        #   bounding_box: 99611549961210/bounding_box.json
+        #   handle_bounding: 99611549961210/handle_bounding.json
+        #   name: '99611549961210'
+        #   path: 99611549961210/mobility.urdf
+        # '4':
+        #   bounding_box: 99611619961214/bounding_box.json
+        #   handle_bounding: 99611619961214/handle_bounding.json
+        #   name: '99611619961214'
+        #   path: 99611619961214/mobility.urdf
+        # '5':
+        #   bounding_box: 99611629961216/bounding_box.json
+        #   handle_bounding: 99611629961216/handle_bounding.json
+        #   name: '99611629961216'
+        #   path: 99611629961216/mobility.urdf
+        # '6':
+        #   bounding_box: 99611729961217/bounding_box.json
+        #   handle_bounding: 99611729961217/handle_bounding.json
+        #   name: '99611729961217'
+        #   path: 99611729961217/mobility.urdf
+        # '7':
+        #   bounding_box: 99611799961226/bounding_box.json
+        #   handle_bounding: 99611799961226/handle_bounding.json
+        #   name: '99611799961226'
+        #   path: 99611799961226/mobility.urdf
+
+      #test
+        # round knob
+        # '2':
+        #   bounding_box: 99611229961213/bounding_box.json
+        #   handle_bounding: 99611229961213/handle_bounding.json
+        #   name: '99611229961213'
+        #   path: 99611229961213/mobility.urdf
+        # '3':
+        #   bounding_box: 99611279961229/bounding_box.json
+        #   handle_bounding: 99611279961229/handle_bounding.json
+        #   name: '99611279961229'
+        #   path: 99611279961229/mobility.urdf
+        # '4':
+        #   bounding_box: 99611289961230/bounding_box.json
+        #   handle_bounding: 99611289961230/handle_bounding.json
+        #   name: '99611289961230'
+        #   path: 99611289961230/mobility.urdf
+        # '5':
+        #   bounding_box: 99611329961234/bounding_box.json
+        #   handle_bounding: 99611329961234/handle_bounding.json
+        #   name: '99611329961234'
+        #   path: 99611329961234/mobility.urdf
+        # '6':
+        #   bounding_box: 99611419961238/bounding_box.json
+        #   handle_bounding: 99611419961238/handle_bounding.json
+        #   name: '99611419961238'
+        #   path: 99611419961238/mobility.urdf
+        # '7':
+        #   bounding_box: 99611569961229/bounding_box.json
+        #   handle_bounding: 99611569961229/handle_bounding.json
+        #   name: '99611569961229'
+        #   path: 99611569961229/mobility.urdf
+        # '8':
+        #   bounding_box: 99611649961234/bounding_box.json
+        #   handle_bounding: 99611649961234/handle_bounding.json
+        #   name: '99611649961234'
+        #   path: 99611649961234/mobility.urdf
+
+sim:
+  substeps: 2
+  physx:
+    num_threads: 4
+    solver_type: 1  # 0: pgs, 1: tgs
+    num_position_iterations: 8
+    num_velocity_iterations: 0
+    contact_offset: 0.002
+    rest_offset: 0.0
+    bounce_threshold_velocity: 0.2
+    max_depenetration_velocity: 1000.0
+    default_buffer_size_multiplier: 5.0
+  flex:
+    num_outer_iterations: 5
+    num_inner_iterations: 20
+    warm_start: 0.8
+    relaxation: 0.75

@@ -1,0 +1,1 @@
+python run.py --task=FrankaSliderDoor --controller=GtPoseController --manipulation=OpenLeverDoorManipulation --sim_device=cuda:0 --seed=2 --pipeline=gpu --cfg_env=cfg/franka_open_lever_door.yaml

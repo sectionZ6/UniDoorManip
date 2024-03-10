@@ -1,0 +1,1 @@
+python run.py --task=FrankaSliderSafe --controller=GtPoseController --manipulation=OpenSafeManipulation --sim_device=cuda:0 --seed=1 --pipeline=gpu --cfg_env=cfg/franka_open_safe.yaml

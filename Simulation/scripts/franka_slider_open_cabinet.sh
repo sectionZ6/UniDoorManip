@@ -1,0 +1,1 @@
+python run.py --task=FrankaSliderCabinet --controller=GtPoseController --manipulation=OpenCabinetManipulation --sim_device=cuda:0 --seed=0 --pipeline=gpu --cfg_env=cfg/franka_open_cabinet.yaml

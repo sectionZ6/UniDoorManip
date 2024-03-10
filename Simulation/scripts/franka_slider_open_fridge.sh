@@ -1,0 +1,1 @@
+python run.py --task=FrankaSliderFridge --controller=GtPoseController --manipulation=OpenFridgeManipulation --sim_device=cuda:0 --seed=2 --pipeline=gpu --cfg_env=cfg/franka_open_fridge.yaml

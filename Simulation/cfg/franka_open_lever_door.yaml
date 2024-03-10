@@ -1,0 +1,247 @@
+task:
+  task_name: "leverdoor"
+  action_type: "pull"
+
+model:
+  pc_input_feat: 3
+  pc_feat_dim: 128
+  state_feat_dim: 64
+  action_feat_dim: 64
+  action_dim: 9
+  state_dim: 18
+  fixed_state_dim: 14
+  # actor_model_path: '../robot_arm_models/exp-model_actor-lever_pull_multistep/ckpts/420-network.pth'
+  # actor_model_path: '../robot_arm_models/exp-model_actor-universal_two_all_3000/ckpts/595-network.pth'
+  actor_model_path: '../robot_arm_models/exp-model_actor-unforce_door_two/ckpts/495-network.pth'
+  force_model_path: '../robot_arm_models/exp-model_actor_force-force_door_two/ckpts/495-network.pth'
+  fixed_actor_model_path: '../robot_arm_models/exp-model_actor-universal_fixed_two_3000/ckpts/495-network.pth'
+  without_pro_actor_model_path: '../robot_arm_models/exp-model_actor-universal_two_without_pro/ckpts/595-network.pth'
+  without_pro_handle_actor_model_path: '../robot_arm_models/exp-model_actor_universal_one_without_pro/ckpts/595-network.pth'
+  without_int_handle_actor_model_path: '../robot_arm_models/exp-model_actor-universal_one_without_int_1500/ckpts/595-network.pth'
+  # critic_model_path: '../robot_arm_models/exp-model_critic-lever_pull_critic_multistep/ckpts/298-network.pth'
+  handle_actor_model_path: '../robot_arm_models/exp-model_actor-universal_one_all/ckpts/595-network.pth'
+  # ump
+  ump_model_path: '../robot_arm_models/exp-model_actor-universal_ump/ckpts/595-network.pth'
+
+  mobile: True
+
+env:
+  env_name: "franka_open_lever_door"
+  numTrain: 1
+  numVal: 0
+  numObservations: 26
+  numActions: 9
+  envSpacing: 2.0
+  maxEpisodeLength: 110
+  actionSpeedScale: 20
+  enableDebugVis: False
+
+  enableCameraSensors: True
+  enableForceSensors: True
+  enableNetContact: False
+
+  model_test: True  # 在收集数据时要关闭/ 测试模型打开
+  gapartnet_baseline: False
+  figure: False
+  collectData: False
+  collect_all: True
+  start_index: 80
+  # collectDataPath: "lever_handle_one/0" # ../logs/_seed{}/***
+  collectDataPath: "unforce-door-one/1" # ../logs/_seed{}/***
+  collectPC: True
+  collectForce: True
+  visualizePointcloud: False
+  PointDownSampleNum: 4096
+
+  reset:
+    door:
+      resetPositionNoise: 0.0
+      resetRotationNoise: 0.0
+      resetDofPosRandomInterval: 0.0
+      resetDofVelRandomInterval: 0.0
+    franka:
+      resetPositionNoise: 0.0
+      resetRotationNoise: 0.0
+      resetDofPosRandomInterval: 0.0
+      resetDofVelRandomInterval: 0.0
+
+  driveMode: "osc"
+  clipObservations: 5.0
+  clipActions: 1.0
+
+  asset:
+    assetRoot: "../Datasets"
+    datasetPath: "LeverDoor"
+    DoorAssetNumTrain: 1
+    DoorAssetNumVal: 0
+    randomAsset: False
+    load_block: "opensource_leverdoor"
+    trainAssets:
+      opensource_leverdoor:
+        '0':
+          bounding_box: 99650089960001/bounding_box.json
+          handle_bounding: 99650089960001/handle_bounding.json
+          name: '99650089960001'
+          path: 99650089960001/mobility.urdf
+        # '1':
+        #   bounding_box: 99655039960006/bounding_box.json
+        #   handle_bounding: 99655039960006/handle_bounding.json
+        #   name: '99655039960006'
+        #   path: 99655039960006/mobility.urdf
+        # '2':
+        #   bounding_box: 99655049960010/bounding_box.json
+        #   handle_bounding: 99655049960010/handle_bounding.json
+        #   name: '99655049960010'
+        #   path: 99655049960010/mobility.urdf
+        # '3':
+        #   bounding_box: 99655089960011/bounding_box.json
+        #   handle_bounding: 99655089960011/handle_bounding.json
+        #   name: '99655089960011'
+        #   path: 99655089960011/mobility.urdf
+        # '4':
+        #   bounding_box: 99660039960014/bounding_box.json
+        #   handle_bounding: 99660039960014/handle_bounding.json
+        #   name: '99660039960014'
+        #   path: 99660039960014/mobility.urdf
+        # '5':
+        #   bounding_box: 99660079960017/bounding_box.json
+        #   handle_bounding: 99660079960017/handle_bounding.json
+        #   name: '99660079960017'
+        #   path: 99660079960017/mobility.urdf
+        # '6':
+        #   bounding_box: 99660089960018/bounding_box.json
+        #   handle_bounding: 99660089960018/handle_bounding.json
+        #   name: '99660089960018'
+        #   path: 99660089960018/mobility.urdf
+        # '7':
+        #   bounding_box: 99660099960019/bounding_box.json
+        #   handle_bounding: 99660099960019/handle_bounding.json
+        #   name: '99660099960019'
+        #   path: 99660099960019/mobility.urdf
+        # '8':
+        #   bounding_box: 99665019960024/bounding_box.json
+        #   handle_bounding: 99665019960024/handle_bounding.json
+        #   name: '99665019960024'
+        #   path: 99665019960024/mobility.urdf
+        # '9':
+        #   bounding_box: 99665029960025/bounding_box.json
+        #   handle_bounding: 99665029960025/handle_bounding.json
+        #   name: '99665029960025'
+        #   path: 99665029960025/mobility.urdf
+        # '10':
+        #   bounding_box: 99665039960028/bounding_box.json
+        #   handle_bounding: 99665039960028/handle_bounding.json
+        #   name: '99665039960028'
+        #   path: 99665039960028/mobility.urdf
+        # '11':
+        #   bounding_box: 99665049960034/bounding_box.json
+        #   handle_bounding: 99665049960034/handle_bounding.json
+        #   name: '99665049960034'
+        #   path: 99665049960034/mobility.urdf
+        # '12':
+        #   bounding_box: 99688979960035/bounding_box.json
+        #   handle_bounding: 99688979960035/handle_bounding.json
+        #   name: '99688979960035'
+        #   path: 99688979960035/mobility.urdf
+        # '13':
+        #   bounding_box: 99689039960045/bounding_box.json
+        #   handle_bounding: 99689039960045/handle_bounding.json
+        #   name: '99689039960045'
+        #   path: 99689039960045/mobility.urdf
+        # '14':
+        #   bounding_box: 99689669960001/bounding_box.json
+        #   handle_bounding: 99689669960001/handle_bounding.json
+        #   name: '99689669960001'
+        #   path: 99689669960001/mobility.urdf
+        # '15':
+        #   bounding_box: 99690039960001/bounding_box.json
+        #   handle_bounding: 99690039960001/handle_bounding.json
+        #   name: '99690039960001'
+        #   path: 99690039960001/mobility.urdf
+        # '16':
+        #   bounding_box: 99690329960006/bounding_box.json
+        #   handle_bounding: 99690329960006/handle_bounding.json
+        #   name: '99690329960006'
+        #   path: 99690329960006/mobility.urdf
+        # '17':
+        #   bounding_box: 99691179960010/bounding_box.json
+        #   handle_bounding: 99691179960010/handle_bounding.json
+        #   name: '99691179960010'
+        #   path: 99691179960010/mobility.urdf
+        # '18':
+        #   bounding_box: 99692779960014/bounding_box.json
+        #   handle_bounding: 99692779960014/handle_bounding.json
+        #   name: '99692779960014'
+        #   path: 99692779960014/mobility.urdf
+
+        ###### test
+        # '19':
+        #   bounding_box: 99650069960003/bounding_box.json
+        #   handle_bounding: 99650069960003/handle_bounding.json
+        #   name: '99650069960003'
+        #   path: 99650069960003/mobility.urdf
+        # '20':
+        #   bounding_box: 99655059960012/bounding_box.json
+        #   handle_bounding: 99655059960012/handle_bounding.json
+        #   name: '99655059960012'
+        #   path: 99655059960012/mobility.urdf
+        # '21':
+        #   bounding_box: 99655079960021/bounding_box.json
+        #   handle_bounding: 99655079960021/handle_bounding.json
+        #   name: '99655079960021'
+        #   path: 99655079960021/mobility.urdf
+        # '22':
+        #   bounding_box: 99660019960022/bounding_box.json
+        #   handle_bounding: 99660019960022/handle_bounding.json
+        #   name: '99660019960022'
+        #   path: 99660019960022/mobility.urdf
+        # '23':
+        #   bounding_box: 99660059960030/bounding_box.json
+        #   handle_bounding: 99660059960030/handle_bounding.json
+        #   name: '99660059960030'
+        #   path: 99660059960030/mobility.urdf
+        # '24':
+        #   bounding_box: 99689949960032/bounding_box.json
+        #   handle_bounding: 99689949960032/handle_bounding.json
+        #   name: '99689949960032'
+        #   path: 99689949960032/mobility.urdf
+        # '25':
+        #   bounding_box: 99690419960036/bounding_box.json
+        #   handle_bounding: 99690419960036/handle_bounding.json
+        #   name: '99690419960036'
+        #   path: 99690419960036/mobility.urdf
+        # '26':
+        #   bounding_box: 99690659960046/bounding_box.json
+        #   handle_bounding: 99690659960046/handle_bounding.json
+        #   name: '99690659960046'
+        #   path: 99690659960046/mobility.urdf
+        # '27':
+        #   bounding_box: 99691649960048/bounding_box.json
+        #   handle_bounding: 99691649960048/handle_bounding.json
+        #   name: '99691649960048'
+        #   path: 99691649960048/mobility.urdf
+        '28':
+          bounding_box: 99692809960003/bounding_box.json
+          handle_bounding: 99692809960003/handle_bounding.json
+          name: '99692809960003'
+          path: 99692809960003/mobility.urdf
+      
+    testAssets:
+
+sim:
+  substeps: 2
+  physx:
+    num_threads: 4
+    solver_type: 1  # 0: pgs, 1: tgs
+    num_position_iterations: 8
+    num_velocity_iterations: 0
+    contact_offset: 0.002
+    rest_offset: 0.0
+    bounce_threshold_velocity: 0.2
+    max_depenetration_velocity: 1000.0
+    default_buffer_size_multiplier: 5.0
+  flex:
+    num_outer_iterations: 5
+    num_inner_iterations: 20
+    warm_start: 0.8
+    relaxation: 0.75
