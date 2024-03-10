@@ -31,15 +31,15 @@ We release our method of dataset construction. Provided by the method, the datas
 We provide individual simulation environments for each category and mechanism. Here we show some task demos with a movable robot arm. 
 <table>
     <tr>
-        <td ><center><img src="img/door1.gif" width=400> Interior </center></td>
-        <td ><center><img src="img/window1.gif" width=400>Window</center></td>
+        <td ><center><img src="img/door_1.gif" width=400> Interior </center></td>
+        <td ><center><img src="img/window_1.gif" width=400>Window</center></td>
     </tr>
     <tr>
         <td ><center><img src="img/car1.gif" > Car </center></td>
-        <td ><center><img src="img/Safe1.gif" >Safe</center></td>
+        <td ><center><img src="img/safe.gif" >Safe</center></td>
     </tr>
     <tr>
-        <td ><center><img src="img/Sto1.gif" > StorageFurniture </center></td>
+        <td ><center><img src="img/cabinet_1.gif" > StorageFurniture </center></td>
         <td ><center><img src="img/Ref1.gif" >Refrigerator</center></td>
     </tr>
 </table>
