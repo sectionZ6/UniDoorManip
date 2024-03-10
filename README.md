@@ -31,15 +31,15 @@ We release our method of dataset construction. Provided by the method, the datas
 We provide individual simulation environments for each category and mechanism. Here we show some task demos with a movable robot arm. 
 <table>
     <tr>
-        <td ><center><img src="img/door_1.gif" width=400> Interior </center></td>
-        <td ><center><img src="img/window_1.gif" width=400>Window</center></td>
+        <td ><center><img src="img/door1.gif" width=400> Interior </center></td>
+        <td ><center><img src="img/window1.gif" width=400>Window</center></td>
     </tr>
     <tr>
         <td ><center><img src="img/car1.gif" > Car </center></td>
-        <td ><center><img src="img/safe.gif" >Safe</center></td>
+        <td ><center><img src="img/Safe1.gif" >Safe</center></td>
     </tr>
     <tr>
-        <td ><center><img src="img/cabinet_1.gif" > StorageFurniture </center></td>
+        <td ><center><img src="img/Sto1.gif" > StorageFurniture </center></td>
         <td ><center><img src="img/Ref1.gif" >Refrigerator</center></td>
     </tr>
 </table>
@@ -60,10 +60,10 @@ This repository has been developed and tested with Ubuntu 20.04 and CUDA 11.7. T
    ```
 2. Install the dependecies.
    ```shell
-   pip install torch==1.13.1 torchvision==0.14.1 open3d pytorch3d ipdb trimesh
+   pip install torch==1.13.1 torchvision==0.14.1 ipdb trimesh
    ```
-4. Install the simulator IsaacGym following the [official guide](https://developer.nvidia.com/isaac-gym).
-5. Install the PointNet++
+3. Install the simulator IsaacGym following the [official guide](https://developer.nvidia.com/isaac-gym).
+<!-- 5. Install the PointNet++
   ```shell
      git clone --recursive https://github.com/erikwijmans/Pointnet2_PyTorch
      cd Pointnet2_PyTorch
@@ -71,16 +71,16 @@ This repository has been developed and tested with Ubuntu 20.04 and CUDA 11.7. T
      pip install -e .
   ```
   Notice that PointNet++ requires the match of CUDA version and pytorch version.
-
+-->
 ### Run the simulation
 We already provide the shell scripts, just run the file and you will see the simulation environments.
 ```shell
-  cd [path_to_this_repo]/DoorManip
+  cd [path_to_this_repo]/Simulation
   bash scripts/franka_slider_open_[category].sh
 ```
 For example, if you want to use the lever door simulation, you can run the following code:
 ```shell
-  cd [path_to_this_repo]/DoorManip
+  cd [path_to_this_repo]/Simulation
   bash scripts/franka_slider_open_lever_door.sh
 ```
 
