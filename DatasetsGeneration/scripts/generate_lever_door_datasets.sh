@@ -1,0 +1,1 @@
+python generate_lever_door_datasets.py --lever_door_list 9965008 9965503 --lever_door_handle_list 9960001 9960006

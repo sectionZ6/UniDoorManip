@@ -1,0 +1,1 @@
+python generate_cabinet_datasets.py --cabinet_list 9961301 9961302 --round_handle_list 9962004 9962009

@@ -1,0 +1,1 @@
+python generate_fridge_datasets.py --fridge_list 9961408 9961401 --fridge_handle_list 9961503 9960005

@@ -1,0 +1,1 @@
+python generate_car_datasets.py --car_list 9967019 9967015 --car_handle_list 9968005 9968006
