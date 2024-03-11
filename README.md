@@ -6,7 +6,20 @@ This is the official repository of UniDoorManip: Learning Universal Door Manipul
 
 [Project](https://unidoormanip.github.io/) | [Paper](https://arxiv.org/abs/2403.02604) | [ArXiv](https://arxiv.org/pdf/2403.02604.pdf) | Video
 ![Overview](img/teasor.png)
- 
+
+## Mechanism 
+<table>
+    <tr>
+        <td ><center><img src="img/door_succ.gif" width=500>  </center></td>
+        <td ><center><img src="img/door_failure.gif" width=500></center></td>
+    </tr>
+    <tr>
+        <td ><center><img src="img/safe_succ.gif" width=500>  </center></td>
+        <td ><center><img src="img/safe_failure.gif" width=500></center></td>
+    </tr>
+</table>
+
+
 ## Dataset
 Our dataset consists of the door parts (bodies and handles), and the integrated doors across six categories(Interior, Window, Car, Safe, StorageFurniture, Refrigerator).
 The door parts are selected from [**PartNet-Mobility**](https://sapien.ucsd.edu/) and [**3d Warehouse**](https://3dwarehouse.sketchup.com/). We annotate the part axis and poses and develop a method to integrate the parts into the doors.
