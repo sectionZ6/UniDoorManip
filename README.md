@@ -11,7 +11,7 @@ The door parts are selected from [**PartNet-Mobility**](https://sapien.ucsd.edu/
 
 Here we have already constructed some door examples, you can download the pakage [**here**](https://drive.google.com/uc?export=download&id=1Tkkgyn9slUXmcxYcbTKa1Rj3QeM74SbL). 
 
-For more details about the method of parts integration, please refer to the DatasetGeneration directory.
+For more details about the door parts and the method of parts integration, please refer to the DatasetGeneration directory.
 <!--
 Both include object assets and images, annotations of part pose and the rendered pointcloud. 
 Examples are in the dataset directory and visualized below. 
@@ -83,7 +83,7 @@ For example, if you want to use the lever door simulation, you can run the follo
   cd [path_to_this_repo]/Simulation
   bash scripts/franka_slider_open_lever_door.sh
 ```
-After you run the above instructions, you can get the following results.
+The result is shown below.
 
 <img src="img/open_lever_example.gif" width="1000px" />
 <!--
