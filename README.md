@@ -4,7 +4,7 @@
 
 This is the official repository of UniDoorManip: Learning Universal Door Manipulation Policy Over Large-scale and Diverse Door Manipulation Environments.
 ![Overview](img/teasor.png)
-
+ 
 ## Dataset
 Our dataset consists of the door parts (bodies and handles), and the integrated doors across six categories(Interior, Window, Car, Safe, StorageFurniture, Refrigerator).
 The door parts are selected from [**PartNet-Mobility**](https://sapien.ucsd.edu/) and [**3d Warehouse**](https://3dwarehouse.sketchup.com/). We annotate the part axis and poses and develop a method to integrate the parts into the doors.
