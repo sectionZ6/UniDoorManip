@@ -24,10 +24,10 @@ class BaseEnv():
 
     def _cam_pose(self) :
 
-        cam_pos = gymapi.Vec3(1.5, 1.5, 1.2)
-        cam_target = gymapi.Vec3(0.0, 0.0, 0.7)
-        # cam_pos = gymapi.Vec3(1.0, 1.0, 1.5)
-        # cam_target = gymapi.Vec3(0.0, 0.0, 0.5)
+        # cam_pos = gymapi.Vec3(1.5, 1.5, 1.2)
+        # cam_target = gymapi.Vec3(0.0, 0.0, 0.7)
+        cam_pos = gymapi.Vec3(1.0, 1.0, 1.5)
+        cam_target = gymapi.Vec3(0.0, 0.0, 0.5)
 
         return cam_pos, cam_target
 
