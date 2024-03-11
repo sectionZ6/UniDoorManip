@@ -84,11 +84,14 @@ For example, if you want to use the lever door simulation, you can run the follo
   bash scripts/franka_slider_open_lever_door.sh
 ```
 After you run the above instructions, you can get the following results.
+
+<img src="img/open_lever_example.gif" width="800px" />
+<!--
 <table>
     <tr>
         <td ><center><img src="img/open_lever_example.gif" width=800> </center></td>
     </tr>
-</table>
+</table> -->
 
 <!--
 **UniDoorManip/UniDoorManip** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
