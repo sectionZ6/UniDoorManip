@@ -10,12 +10,12 @@ This is the official repository of UniDoorManip: Learning Universal Door Manipul
 ## Mechanism 
 <table>
     <tr>
-        <td ><center><img src="img/door_succ.gif" width=500>  </center></td>
-        <td ><center><img src="img/door_failure.gif" width=500></center></td>
+        <td ><center><img src="img/door_succ.gif" width=400>  </center></td>
+        <td ><center><img src="img/door_failure.gif" width=400></center></td>
     </tr>
     <tr>
-        <td ><center><img src="img/safe_succ.gif" width=500>  </center></td>
-        <td ><center><img src="img/safe_failure.gif" width=500></center></td>
+        <td ><center><img src="img/safe_succ.gif" width=400>  </center></td>
+        <td ><center><img src="img/safe_failure.gif" width=400></center></td>
     </tr>
 </table>
 
