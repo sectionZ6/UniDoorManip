@@ -76,8 +76,8 @@ env_lower = gymapi.Vec3(-spacing, 0.0, -spacing)
 env_upper = gymapi.Vec3(spacing, 0.0, spacing)
 
 # add cartpole urdf asset
-asset_root = "../generated_datasets/lever_door_datasets"
-asset_file = "99650089960001/mobility.urdf"
+asset_root = "./generated_datasets/round_door_datasets"
+asset_file = "99665029962014/mobility.urdf"
 
 # Load asset with default control type of position for all joints
 asset_options = gymapi.AssetOptions()
@@ -95,7 +95,7 @@ print("Loading asset '%s' from '%s'" % (asset_file, asset_root))
 cartpole_asset = gym.load_asset(sim, asset_root, asset_file, asset_options)
 
 # initial root pose for cartpole actors
-with open("../generated_datasets/lever_door_datasets/99650089960001/bounding_box.json", "r") as f:
+with open("../generated_datasets/round_door_datasets/99665029962014/bounding_box.json", "r") as f:
     bounding_box = json.load(f)
     min_b = bounding_box["min"]
 # with open("./3dware_fridge/9961409/bounding_box.json", "r") as f:
