@@ -3,6 +3,8 @@
 </h2>
 
 This is the official repository of UniDoorManip: Learning Universal Door Manipulation Policy Over Large-scale and Diverse Door Manipulation Environments.
+
+[Project](https://unidoormanip.github.io/) | [Paper](https://arxiv.org/abs/2403.02604) | [ArXiv](https://arxiv.org/pdf/2403.02604.pdf) | Video
 ![Overview](img/teasor.png)
  
 ## Dataset
@@ -92,6 +94,40 @@ The result is shown below.
         <td ><center><img src="img/open_lever_example.gif" width=800> </center></td>
     </tr>
 </table> -->
+
+## Citation
+If you find our project useful, welcome to cite our paper
+```
+@article{li2024unidoormanip,
+  title={UniDoorManip: Learning Universal Door Manipulation Policy Over Large-scale and Diverse Door Manipulation Environments},
+  author={Li, Yu and Zhang, Xiaojie and Wu, Ruihai and Zhang, Zilong and Geng, Yiran and Dong, Hao and He, Zhaofeng},
+  journal={arXiv preprint arXiv:2403.02604},
+  year={2024}
+}
+```
+and our motivating projects [**PartNet-Mobility**](https://sapien.ucsd.edu/browse) and [**VAT-MART**](https://hyperplane-lab.github.io/vat-mart/).
+```
+@inproceedings{xiang2020sapien,
+  title={Sapien: A simulated part-based interactive environment},
+  author={Xiang, Fanbo and Qin, Yuzhe and Mo, Kaichun and Xia, Yikuan and Zhu, Hao and Liu, Fangchen and Liu, Minghua and Jiang, Hanxiao and Yuan, Yifu and Wang, He and others},
+  booktitle={Proceedings of the IEEE/CVF conference on computer vision and pattern recognition},
+  pages={11097--11107},
+  year={2020}
+}
+
+@inproceedings{
+wu2022vatmart,
+title={{VAT}-Mart: Learning Visual Action Trajectory Proposals for Manipulating 3D {ART}iculated Objects},
+author={Ruihai Wu and Yan Zhao and Kaichun Mo and Zizheng Guo and Yian Wang and Tianhao Wu and Qingnan Fan and Xuelin Chen and Leonidas Guibas and Hao Dong},
+booktitle={International Conference on Learning Representations},
+year={2022},
+url={https://openreview.net/forum?id=iEx3PiooLy}
+}
+
+```
+
+## Contact
+If you have any questions, please feel free to contact [Yu Li](https://github.com/Student-of-Holmes) at brucelee_at_bupt_edu_cn, [Xiaojie Zhang](https://github.com/sectionZ6) at sectionz_at_bupt_edu_cn and [Ruihai Wu](https://warshallrho.github.io/) at wuruihai_at_pku_edu_cn.
 
 <!--
 **UniDoorManip/UniDoorManip** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
