@@ -9,13 +9,15 @@ Please download the door parts [**here**](https://drive.google.com/uc?export=dow
 ## Assets Generation
 For each category, we provide a specific python scripts for assets generation. You can simply run the code to generate the doors.
 ```shell
-   bash generate_[category]_datasets.sh --[category-body-list] xxx xxx --[category-handle-list] xxx xxx
+   bash generate_[category]_datasets.sh
 ```
-The above ```[category-body-list]``` and ```[category-handle-list]``` are hyperparameters, which represent the parts list of the datasets to be synthesized. ```xxx``` represents the name of parts that you can find in assets floder. We provide default settings in sctrips.
+For each bash file, we provide default settings, which include two hyperparameters:  ```[category-body-list]``` and ```[category-handle-list]``` . It represents a parts list of the dataset to be synthesized. You can find all the identifiers of the corresponding parts in the assets folder.
+
+For example, you can run the following command to generate round handle doors.
 ```shell
-   python generate_lever_door_datasets.py --lever_door_list 9965008 9965503 --lever_door_handle_list 9960001 9960006
+   bash generate_round_door_datasets.sh
 ```
-The generated door assets will be in this directory([path/to/repo/DatasetsGeneration/]).
+The generated door assets will be in this directory([path/to/repo]/DatasetsGeneration/**generated_datasets/[category]**). You can modify the output path by adding ```--save_path 'your/path'``` to the specified bash file.
 
 ## Assets Testing
 We provide a simple simlulation environment to check the generated door asset.
