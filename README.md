@@ -85,7 +85,7 @@ For example, if you want to use the lever door simulation, you can run the follo
 ```
 After you run the above instructions, you can get the following results.
 
-<img src="img/open_lever_example.gif" width="800px" />
+<img src="img/open_lever_example.gif" width="1000px" />
 <!--
 <table>
     <tr>
