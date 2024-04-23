@@ -79,7 +79,7 @@ This repository has been developed and tested with Ubuntu 20.04 and CUDA 11.7. T
    pip install torch==1.13.1 torchvision==0.14.1 ipdb trimesh
    ```
 3. Install the simulator IsaacGym following the [official guide](https://developer.nvidia.com/isaac-gym).
-<!-- 5. Install the PointNet++
+5. Install the PointNet++
   ```shell
      git clone --recursive https://github.com/erikwijmans/Pointnet2_PyTorch
      cd Pointnet2_PyTorch
@@ -87,7 +87,6 @@ This repository has been developed and tested with Ubuntu 20.04 and CUDA 11.7. T
      pip install -e .
   ```
   Notice that PointNet++ requires the match of CUDA version and pytorch version.
--->
 ### Run the simulation
 We already provide the shell scripts, just run the file and you will see the simulation environments.
 ```shell
