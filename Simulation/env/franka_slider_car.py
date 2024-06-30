@@ -366,10 +366,8 @@ class FrankaSliderCar(BaseEnv):
         # print("camera_handle", camera_handle)
 
         # local_transform = gymapi.Transform()
-        # #正对偏右视角
         # local_transform.p = gymapi.Vec3(-0.12, 0.05, -0.0)
         # local_transform.r = gymapi.Quat.from_axis_angle(gymapi.Vec3(0, 1, 0), np.deg2rad(-60))
-        # #左上视角
         # # local_transform.p = gymapi.Vec3(0.0, 0.20, 0.06)
         # # local_transform.r = gymapi.Quat.from_axis_angle(gymapi.Vec3(0, 1, 1), np.deg2rad(-90))
         # hand_handle = self.gym.get_actor_rigid_body_handle(env_ptr, self.gripper_actor_list[env_id], 6)
@@ -890,7 +888,7 @@ class FrankaSliderCar(BaseEnv):
                 reseted = True
                 self.progress_buf[env_id] = 0
                 self.reset_buf[env_id] = 0
-                self.success_buf[env_id] = 0
+                
 
         if reseted:
             self.gym.set_dof_state_tensor(
@@ -987,7 +985,6 @@ class FrankaSliderCar(BaseEnv):
         if self.cfg["env"]["driveMode"] == "ik":
             dof_pos = self.franka_dof_tensor[:, :, 0]
             joints = self.franka_num_dofs - 2
-            #TODO:为什么用空间信息对其进行缩放    而且动作采用11维度 中间有2维没用
             target_pos = actions[:, :3]*self.space_range + self.space_middle
             pos_err = target_pos - self.hand_rigid_body_tensor[:, :3]
 
