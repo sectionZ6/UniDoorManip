@@ -253,34 +253,14 @@ class multimodaldata(data.Dataset):
     def process_data(self):
         #pc normalization
         self.pc = self.pc_normalize(self.pc)
-        # #force clamp
-        # self.hand_sensor_force = torch.tanh(self.hand_sensor_force)
-        # self.impedance_force = torch.tanh(self.impedance_force)
-        #proprioception clamp
-
-        #action residual and clamp
-        # if self.residual: #lose init data
-        #     self.action = self.residual_action()
-
-        #state clamp
-
-        #calculate critic score
-        # self.critic_score = torch.abs(self.state[..., 0]) / (torch.max(self.state[..., 0]) + 1e-8)
         self.critic_score = self.state[..., 0]  # 直接用度数监督
-        # ipdb.set_trace()
-        print(self.critic_score.max())
-        print(self.critic_score.mean())
 
     def pc_normalize(self, pc):
         print("normalize pc", pc.shape)
-        print("max_test", torch.max(pc))
-        print("min_test", torch.min(pc))
         center = torch.mean(pc, dim=-2, keepdim=True)
         pc = pc - center
         m = torch.max(torch.norm(pc, p=2, dim=-1)).unsqueeze(-1)
         pc = pc / m
-        print("max_test", torch.max(torch.norm(pc, p=2, dim=-1)))
-        print("min_test", torch.min(torch.norm(pc, p=2, dim=-1)))
 
         return pc
     
