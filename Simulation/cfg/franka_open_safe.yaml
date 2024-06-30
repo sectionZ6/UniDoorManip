@@ -45,6 +45,7 @@ env:
   collectData: False
   collect_all: True
   start_index: 80
+  end_index: 230
   collectDataPath: "universal-safe-fixed-two/3" # ../logs/_seed{}/***
   collectPC: True
   collectForce: False

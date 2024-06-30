@@ -59,63 +59,6 @@ class FrankaSliderDoor(BaseEnv):
 
         self.init_all_tensor()
 
-    def create_camera(self, env_ptr, env_id):
-        if self.figure:
-            camera_props = gymapi.CameraProperties()
-            camera_props.width = 2560
-            camera_props.height = 2560
-            camera_handle_front = self.gym.create_camera_sensor(env_ptr, camera_props)
-            camera_handle_left = self.gym.create_camera_sensor(env_ptr, camera_props)
-            camera_handle_right = self.gym.create_camera_sensor(env_ptr, camera_props)
-            #正面camera
-            self.gym.set_camera_location(camera_handle_front, env_ptr, gymapi.Vec3(1.2, 0.0, 2.0), gymapi.Vec3(0.01, 0.0, 0.8))
-            # 左侧camera
-            self.gym.set_camera_location(camera_handle_right, env_ptr, gymapi.Vec3(1.5, 1.2, 2.0), gymapi.Vec3(0.01, 0.0, 1.4))
-            # 右侧camera
-            self.gym.set_camera_location(camera_handle_left, env_ptr, gymapi.Vec3(1.2, -1.0, 2.0), gymapi.Vec3(0.01, 0.0, 0.8))
-
-            self.camera_handle_front_list.append(camera_handle_front)
-            self.camera_handle_left_list.append(camera_handle_left)
-            self.camera_handle_right_list.append(camera_handle_right)
-
-        camera_props = gymapi.CameraProperties()
-        camera_props.width = 256
-        camera_props.height = 256
-        # camera_props.enable_tensors = True
-        # ipdb.set_trace()
-        camera_handle = self.gym.create_camera_sensor(env_ptr, camera_props)
-        # print("camera_handle", camera_handle)
-
-        # local_transform = gymapi.Transform()
-        # #正对偏右视角
-        # local_transform.p = gymapi.Vec3(-0.12, 0.05, -0.0)
-        # local_transform.r = gymapi.Quat.from_axis_angle(gymapi.Vec3(0, 1, 0), np.deg2rad(-60))
-        # #左上视角
-        # # local_transform.p = gymapi.Vec3(0.0, 0.20, 0.06)
-        # # local_transform.r = gymapi.Quat.from_axis_angle(gymapi.Vec3(0, 1, 1), np.deg2rad(-90))
-        # hand_handle = self.gym.get_actor_rigid_body_handle(env_ptr, self.gripper_actor_list[env_id], 6)
-        # # print("hand_handle", hand_handle)
-        # # print("local", local_transform.p, local_transform.r)
-        # self.gym.attach_camera_to_body(camera_handle, env_ptr, hand_handle, local_transform, gymapi.FOLLOW_TRANSFORM)
-        # # self.gym.set_camera_transform(camera_handle, env_ptr, local_transform)
-
-        self.gym.set_camera_location(camera_handle, env_ptr, gymapi.Vec3(1.8, 0.0, 1.8), gymapi.Vec3(0.01, 0.0, 1.5))
-
-        # _cam_tensor = self.gym.get_camera_image_gpu_tensor(self.sim, env_ptr, camera_handle, gymapi.IMAGE_DEPTH)
-        # cam_tensor = gymtorch.wrap_tensor(_cam_tensor)
-        cam_vinv = torch.inverse((torch.tensor(self.gym.get_camera_view_matrix(self.sim, env_ptr, camera_handle)))).to(self.device)
-        cam_proj = torch.tensor(self.gym.get_camera_proj_matrix(self.sim, env_ptr, camera_handle), device=self.device)
-        origin = self.gym.get_env_origin(env_ptr)
-        env_origin = torch.zeros((1, 3), device=self.device)
-        env_origin[0, 0] = origin.x
-        env_origin[0, 1] = origin.y
-        env_origin[0, 2] = origin.z
-        self.camera_handle_list.append(camera_handle)
-        # self.camera_tensor_list.append(cam_tensor)
-        self.camera_vinv_list.append(cam_vinv)
-        self.camera_proj_list.append(cam_proj)
-        self.env_origin_list.append(env_origin)
-
     def _franka_init_pose(self, mobile):
         # random init franka pos  # cabinet 0-1
         if mobile:

@@ -10,6 +10,8 @@ import os
 import operator
 from copy import deepcopy
 import random
+import pytorch3d.transforms as tf
+from pointnet2_ops import pointnet2_utils
 from isaacgym import gymutil, gymtorch, gymapi
 from isaacgym import gymapi
 from isaacgym.gymutil import get_property_setter_map, get_property_getter_map, get_default_setter_args, apply_random_samples, check_buckets, generate_random_samples
@@ -238,6 +240,63 @@ class BaseEnv():
             if self.collectData | self.modelTest:
                 self.create_camera(env_ptr, env_id)
     
+    def create_camera(self, env_ptr, env_id):
+        # if self.figure:
+        #     camera_props = gymapi.CameraProperties()
+        #     camera_props.width = 2560
+        #     camera_props.height = 2560
+        #     camera_handle_front = self.gym.create_camera_sensor(env_ptr, camera_props)
+        #     camera_handle_left = self.gym.create_camera_sensor(env_ptr, camera_props)
+        #     camera_handle_right = self.gym.create_camera_sensor(env_ptr, camera_props)
+        #     #正面camera
+        #     self.gym.set_camera_location(camera_handle_front, env_ptr, gymapi.Vec3(1.2, 0.0, 2.0), gymapi.Vec3(0.01, 0.0, 0.8))
+        #     # 左侧camera
+        #     self.gym.set_camera_location(camera_handle_right, env_ptr, gymapi.Vec3(1.5, 1.2, 2.0), gymapi.Vec3(0.01, 0.0, 1.4))
+        #     # 右侧camera
+        #     self.gym.set_camera_location(camera_handle_left, env_ptr, gymapi.Vec3(1.2, -1.0, 2.0), gymapi.Vec3(0.01, 0.0, 0.8))
+
+        #     self.camera_handle_front_list.append(camera_handle_front)
+        #     self.camera_handle_left_list.append(camera_handle_left)
+        #     self.camera_handle_right_list.append(camera_handle_right)
+
+        camera_props = gymapi.CameraProperties()
+        camera_props.width = 256
+        camera_props.height = 256
+        # camera_props.enable_tensors = True
+        # ipdb.set_trace()
+        camera_handle = self.gym.create_camera_sensor(env_ptr, camera_props)
+        # print("camera_handle", camera_handle)
+
+        # local_transform = gymapi.Transform()
+        # #正对偏右视角
+        # local_transform.p = gymapi.Vec3(-0.12, 0.05, -0.0)
+        # local_transform.r = gymapi.Quat.from_axis_angle(gymapi.Vec3(0, 1, 0), np.deg2rad(-60))
+        # #左上视角
+        # # local_transform.p = gymapi.Vec3(0.0, 0.20, 0.06)
+        # # local_transform.r = gymapi.Quat.from_axis_angle(gymapi.Vec3(0, 1, 1), np.deg2rad(-90))
+        # hand_handle = self.gym.get_actor_rigid_body_handle(env_ptr, self.gripper_actor_list[env_id], 6)
+        # # print("hand_handle", hand_handle)
+        # # print("local", local_transform.p, local_transform.r)
+        # self.gym.attach_camera_to_body(camera_handle, env_ptr, hand_handle, local_transform, gymapi.FOLLOW_TRANSFORM)
+        # # self.gym.set_camera_transform(camera_handle, env_ptr, local_transform)
+
+        self.gym.set_camera_location(camera_handle, env_ptr, gymapi.Vec3(1.8, 0.0, 1.8), gymapi.Vec3(0.01, 0.0, 1.5))
+
+        # _cam_tensor = self.gym.get_camera_image_gpu_tensor(self.sim, env_ptr, camera_handle, gymapi.IMAGE_DEPTH)
+        # cam_tensor = gymtorch.wrap_tensor(_cam_tensor)
+        cam_vinv = torch.inverse((torch.tensor(self.gym.get_camera_view_matrix(self.sim, env_ptr, camera_handle)))).to(self.device)
+        cam_proj = torch.tensor(self.gym.get_camera_proj_matrix(self.sim, env_ptr, camera_handle), device=self.device)
+        origin = self.gym.get_env_origin(env_ptr)
+        env_origin = torch.zeros((1, 3), device=self.device)
+        env_origin[0, 0] = origin.x
+        env_origin[0, 1] = origin.y
+        env_origin[0, 2] = origin.z
+        self.camera_handle_list.append(camera_handle)
+        # self.camera_tensor_list.append(cam_tensor)
+        self.camera_vinv_list.append(cam_vinv)
+        self.camera_proj_list.append(cam_proj)
+        self.env_origin_list.append(env_origin)
+
     def _load_franka(self, env_ptr, env_id):
         if self.cfg["env"]["enableForceSensors"]:
             hand_sensor_idx = 0
@@ -664,10 +723,10 @@ class BaseEnv():
     def step(self, actions):
         self.progress_buf += 1
         self._perform_actions(actions)
-        # if self.collectData:
-        #     if (self.progress_buf[0] > 80) & (self.progress_buf[0]%10==1):
-        #         print("------------------------------{}".format(self.progress_buf[0]))
-        #         self.collect_data()
+        if self.collectData:
+            if (self.progress_buf[0] > self.cfg["env"]["start_index"]) & (self.progress_buf[0]%10==1):
+                print("------------------------------{}".format(self.progress_buf[0]))
+                self.collect_data()
 
         self.gym.simulate(self.sim)
         self.gym.fetch_results(self.sim, True)
@@ -688,6 +747,207 @@ class BaseEnv():
 
     def get_states(self):
         return self.states_buf
+
+    def collect_data(self):
+        joints = self.franka_num_dofs
+        if self.collectPC :
+            pc = self.compute_point_cloud_state(depth_bar=2.5)
+            self.pc_list.append(pc)
+        
+        if self.pointCloudVisualizer != None :
+            self._refresh_pointcloud_visualizer(pc[0, :, :3])
+        
+        if self.collectForce:
+            _fsdata = self.gym.acquire_force_sensor_tensor(self.sim)
+            hand_sensor_force = gymtorch.wrap_tensor(_fsdata).clone().view(self.num_envs, 6)
+            self.hand_sensor_force_list.append(hand_sensor_force)
+
+        robotqpose = (2 * (self.franka_dof_tensor[:, :joints, 0]-self.franka_dof_lower_limits_tensor[:joints])/
+                      (self.franka_dof_upper_limits_tensor[:joints] - self.franka_dof_lower_limits_tensor[:joints])) - 1
+        robotqvel = self.franka_dof_tensor[:, :joints, 1]
+        franka_root_tensor = self.franka_root_tensor[:, :3]
+        hand_pos = self.hand_rigid_body_tensor[:,:3]
+        hand_rot = self.hand_rigid_body_tensor[:,3:7]
+        self.init_state_index = torch.where((self.open_door_flag[:,0] == True) & (self.init_state_index[:] == 0), (self.progress_buf - self.start_index - 1)/10, self.init_state_index)
+        # 11  11  3  3  
+        proprioception_info = torch.cat([robotqpose, robotqvel, franka_root_tensor, hand_pos, hand_rot], dim = -1)
+        self.proprioception_info_list.append(proprioception_info)
+        
+        # 把四元数转为旋转矩阵，取前两个矢量即可
+        # print(self.actions[:,3:7])
+        # quat_data = torch.cat([self.actions[:,-1].unsqueeze(-1), self.actions[:,3:6]], dim=-1)
+        # if self.progress_buf[0] < 80:
+        #     rotate_m = tf.quaternion_to_matrix(hand_rot)
+        rotate_m = tf.quaternion_to_matrix(self.actions[:,3:7])
+        
+        # new_action = torch.cat([self.actions[:,:3], euler], dim=-1)
+        self.action_list.append(self.actions[:, :3])
+        self.rotate_martix.append(rotate_m)
+        state = torch.cat([self.door_dof_tensor, self.door_handle_dof_tensor, self.door_dof_tensor, self.door_handle_dof_tensor], dim=-1)
+        self.gt_state_list.append(state)
+        # self.finger_action_list.append(self.pos_act[:,-3])
+        # self.proprioception_ik.append(self.u)
+
+        self.impedance_force_list.append(self.impedance_force)
+        end_index = self.cfg["env"]["end_index"]
+        if(self.progress_buf[0] >= end_index):
+            self.collectData = False
+            
+            # collect_flag = (self.door_handle_dof_tensor[:, 0] >= 0.75 * (self.door_actor_dof_upper_limits_tensor[:, 1] - self.door_actor_dof_lower_limits_tensor[:, 1])) & (self.door_dof_tensor[:, 0] > math.pi / 180 * 30)
+            finger_dist = self.lfinger_dof_tensor[:,0] + self.rfinger_dof_tensor[:,0]
+            # finger_tip_pos = (self.lfinger_rigid_body_tensor[:,:3] + self.rfinger_rigid_body_tensor[:,:3]) / 2
+            if self.task == "rounddoor":
+                collect_flag = (finger_dist >= 0.05) & (finger_dist < 0.07)
+            else:
+                collect_flag = (finger_dist >= 0.01) & (finger_dist < 0.04)
+            print("finger_min:",finger_dist.min())
+            print("finger_max:",finger_dist.max())
+
+            # print(collect_flag)
+            # print("collect_flag:", collect_flag)
+            out = {}
+            
+            if self.collectPC :
+                pc_tensor = torch.stack(self.pc_list, dim=1).view(self.num_envs, -1, self.PointDownSampleNum, 3) #[num_success,121,4096,3]
+                print(pc_tensor.shape)
+            if self.collectForce :
+                hand_sensor_force_tensor = torch.stack(self.hand_sensor_force_list, dim=1).view(self.num_envs, -1, 6)[:,:,:3]
+                hand_sensor_force_tensor = torch.nn.functional.normalize(hand_sensor_force_tensor, p=2, dim=-1)
+                print(hand_sensor_force_tensor.shape)
+            impedance_force_tensor = torch.stack(self.impedance_force_list, dim=1).view(self.num_envs, -1, 6)
+            # fixed base 改成28
+            proprioception_info_tensor = torch.stack(self.proprioception_info_list, dim=1).view(self.num_envs, -1, 32)
+            action_tensor = torch.stack(self.action_list, dim=1).view(self.num_envs, -1, 3)
+            # # 如果包含了前面的抓取 则前8个step的action要使用hand_pos
+            # if self.start_index == 0:
+            #     action_tensor[:,:8] = proprioception_info_tensor[:,1:9,25:28]
+            action_tensor = action_tensor - proprioception_info_tensor[:,:,25:28]
+            state_tensor = torch.stack(self.gt_state_list, dim=1).view(self.num_envs, -1, 8)
+            state_tensor[:,1:,0] = state_tensor[:,1:,0] - state_tensor[:,:-1,0]
+            state_tensor[:,1:,2] = state_tensor[:,1:,2] - state_tensor[:,:-1,2]
+
+            rotate_matrix_tensor = torch.stack(self.rotate_martix, dim=1).view(self.num_envs, -1, 3, 3)
+            # proprioception_ik_tensor = torch.stack(self.proprioception_ik, dim=1).view(self.num_envs, -1, 9)
+            # finger_action_tensor = torch.stack(self.finger_action_list, dim=1).view(self.num_envs, -1, 1)
+            init_state_index_tensor = self.init_state_index.view(self.num_envs, )
+            # goal_pos_local_tensor = self.goal_pos_offset_tensor.view(self.num_envs, 3)
+            goal_pos_global_tensor = self.global_goal_pos.view(self.num_envs, 3)
+            # print(finger_action_tensor)
+            print("impedance_force", impedance_force_tensor.shape)
+            print("proprioception_info", proprioception_info_tensor.shape)
+            print("action_tensor", action_tensor.shape)
+            # print("stage_tensor", proprioception_ik_tensor.shape)
+            print("state_tensor", state_tensor.shape)
+            # print("finger_action_tensor", finger_action_tensor.shape)
+            print("rotate_martix_tensor", rotate_matrix_tensor.shape)
+            print("init_state_index_tensor:",init_state_index_tensor.shape)
+            # print("goal_pos_local_tensor:", goal_pos_local_tensor.shape)
+            print("goal_pos_global_tensor:", goal_pos_global_tensor.shape)
+
+            if self.collectPC :
+                out["pc"] = pc_tensor
+            if self.collectForce :
+                out["hand_sensor_force"] = hand_sensor_force_tensor
+            out["impedance_force"] = impedance_force_tensor
+            out["proprioception_info"] = proprioception_info_tensor
+            out["action"] = action_tensor
+            out["rotate_matrix"] = rotate_matrix_tensor
+            # out["proprioception_ik"] = proprioception_ik_tensor
+            out["goal_global_tensor"] = goal_pos_global_tensor
+            # print(goal_pos_global_tensor)
+            out["state"] = state_tensor
+            # out["finger_action"] = finger_action_tensor
+            print("index:",init_state_index_tensor)
+            out["index"] = init_state_index_tensor
+            out["collect_flag"] = collect_flag
+
+            self.mkdir(os.path.join(self.log_dir, self.collect_data_path))
+            torch.save(out, os.path.join(self.log_dir, self.collect_data_path, "data_{}.pt".format(self.seed)))
+    
+    def compute_point_cloud_state(self, depth_bar):
+        camera_props = gymapi.CameraProperties()
+        camera_props.width = 256
+        camera_props.height = 256
+        camera_u = torch.arange(0, camera_props.width, device=self.device)
+        camera_v = torch.arange(0, camera_props.height, device=self.device)
+        camera_v2, camera_u2 = torch.meshgrid(camera_v, camera_u, indexing='ij')
+
+        self.gym.render_all_camera_sensors(self.sim)
+        self.gym.start_access_image_tensors(self.sim)
+        point_clouds = torch.zeros((self.num_envs, self.PointDownSampleNum, 3), device=self.device)
+        for i in range(self.num_envs):
+            env_ptr = self.env_ptr_list[i]
+            camera_handle = self.camera_handle_list[i]
+            cam_vinv = self.camera_vinv_list[i]
+            cam_proj = self.camera_proj_list[i]
+            cam_array = self.gym.get_camera_image(self.sim, env_ptr, camera_handle, gymapi.IMAGE_DEPTH)
+            cam_tensor = torch.tensor(cam_array, device=self.device)
+            points1 = self.depth_image_to_point_cloud_GPU(cam_tensor, cam_vinv,
+                                                          cam_proj, camera_u2, camera_v2,
+                                                          camera_props.width, camera_props.height, depth_bar)
+
+            points = points1
+            # print(points[:, 2].min(), points[:, 2].max())
+            selected_points = self.sample_points(points, sample_num=self.PointDownSampleNum, sample_method='furthest')
+            
+            point_clouds[i] = selected_points - self.env_origin_list[i]
+        self.gym.end_access_image_tensors(self.sim)
+
+        return point_clouds
+
+    def sample_points(self, points, sample_num=1000, sample_method='random'):
+        # print(points[:, 2] > 0.04)
+        # ipdb.set_trace()
+        eff_points = points[points[:, 2] > 0.1].contiguous()
+        # eff_points = points.contiguous()
+        sampled_points_id = pointnet2_utils.furthest_point_sample(eff_points.reshape(1, *eff_points.shape), sample_num)
+        sampled_points = eff_points.index_select(0, sampled_points_id[0].long())
+        return sampled_points
+
+    def _refresh_pointcloud_visualizer(self, point_clouds) :
+
+        if isinstance(point_clouds, list) :
+            points = np.concatenate([a.detach().cpu().numpy() for a in point_clouds], axis=0)
+        else :
+            points = point_clouds.detach().cpu().numpy()
+        
+        import open3d as o3d
+
+        self.o3d_pc.points = o3d.utility.Vector3dVector(points)
+        self.o3d_pc.paint_uniform_color([0, 1, 1])
+
+        if self.pointCloudVisualizerInitialized == False :
+            self.pointCloudVisualizer.add_geometry(self.o3d_pc)
+            self.pointCloudVisualizerInitialized = True
+        else :
+            self.pointCloudVisualizer.update(self.o3d_pc)
+    
+    def depth_image_to_point_cloud_GPU(self, camera_tensor, camera_view_matrix_inv, camera_proj_matrix, u, v, width,
+                                       height,
+                                       depth_bar):
+        # time1 = time.time()
+        depth_buffer = camera_tensor.to(self.device)
+        # Get the camera view matrix and invert it to transform points from camera to world space
+        vinv = camera_view_matrix_inv.to(self.device)
+        # Get the camera projection matrix and get the necessary scaling
+        # coefficients for deprojection
+        proj = camera_proj_matrix.to(self.device)
+        fu = 2 / proj[0, 0]
+        fv = 2 / proj[1, 1]
+        centerU = width / 2
+        centerV = height / 2
+        Z = depth_buffer
+        X = -(u - centerU) / width * Z * fu
+        Y = (v - centerV) / height * Z * fv
+        Z = Z.view(-1)
+        valid = Z > -depth_bar
+        X = X.view(-1)
+        Y = Y.view(-1)
+        position = torch.vstack((X, Y, Z, torch.ones(len(X), device=self.device)))[:, valid]
+        position = position.permute(1, 0)
+        position = position @ vinv
+        points = position[:, 0:3]
+        return points
 
     def render(self, sync_frame_time=False):
         if self.viewer:
@@ -1101,7 +1361,6 @@ class BaseEnv():
         #[num_env,2]
         shape = tensor.shape
         return tensor.view(self.door_num, self.env_per_door, *shape[1:])
-
 
     def post_physics_step(self):
         raise NotImplementedError

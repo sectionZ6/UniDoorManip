@@ -40,12 +40,13 @@ env:
   enableForceSensors: True
   enableNetContact: False
 
-  model_test: True  # 在收集数据时要关闭/ 测试模型打开
+  model_test: False  # 在收集数据时要关闭/ 测试模型打开
   gapartnet_baseline: False
   figure: False
   collectData: False
   collect_all: True
   start_index: 80
+  end_index: 230
   # collectDataPath: "lever_handle_one/0" # ../logs/_seed{}/***
   collectDataPath: "unforce-door-one/1" # ../logs/_seed{}/***
   collectPC: True
