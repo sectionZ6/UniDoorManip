@@ -1,11 +1,14 @@
 <h2 align="center">
   <b>UniDoorManip: Learning Universal Door Manipulation Policy Over Large-scale and Diverse Door Manipulation Environments</b>
+  
+  <i>ICRA 2026 (Accepted)</i>
 </h2>
+
+
 
 This is the official repository of UniDoorManip: Learning Universal Door Manipulation Policy Over Large-scale and Diverse Door Manipulation Environments.
 
-[Project](https://unidoormanip.github.io/) | [Paper](https://arxiv.org/abs/2403.02604) | [ArXiv](https://arxiv.org/pdf/2403.02604.pdf) | Video
-![Overview](img/teasor.png)
+[Project](https://unidoormanip.github.io/) | [Paper](https://arxiv.org/abs/2403.02604) | [ArXiv](https://arxiv.org/pdf/2403.02604.pdf)
 
 ## Mechanism 
 <table>
